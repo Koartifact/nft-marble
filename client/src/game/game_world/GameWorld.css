@@ -1,0 +1,7 @@
+.game__world__container {
+	display: grid;
+	gap: 1rem;
+	width: 100%;
+	height: 100%;
+	padding: 2rem;
+}

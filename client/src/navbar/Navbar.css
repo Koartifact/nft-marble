@@ -1,0 +1,27 @@
+.navbar__container {
+	height: 6rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(216 245 245);
+}
+
+.navbar__container ul {
+	display: flex;
+	justify-content: flex-end;
+	gap: 2rem;
+	width: 100%;
+	padding-right: 3rem;
+}
+.navbar__container ul li .navbar_item {
+	padding: 1rem;
+	background-color: white;
+	border-radius: 25px;
+	border: 1px solid rgb(218, 238, 206);
+	box-shadow: 5px 5px 0px -3px #d3cccc;
+	transition: all 0.2s;
+}
+
+.navbar__container ul li a:hover {
+	box-shadow: 5px 5px 0px 0px #d3cccc;
+}

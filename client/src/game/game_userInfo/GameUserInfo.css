@@ -1,0 +1,34 @@
+.game__user_infos {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: rgb(240, 243, 243);
+	border-radius: 45px;
+	max-width: 100%;
+	padding: 5rem;
+}
+
+.game__user_infos .game__user_info__title {
+	font-size: 2rem;
+	margin-bottom: 4rem;
+}
+.game__user_infos .game__user_info__finance {
+	display: flex;
+	flex-direction: column;
+	gap: 3rem;
+}
+
+.game__user_infos .game__user_info__finance .game__connect_wallet {
+	padding: 2rem;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1.5rem;
+	font-size: 1.2rem;
+}
+
+.game__user_infos .game__user_info__finance .game__connect_wallet img {
+	width: 15rem;
+}

@@ -1,0 +1,23 @@
+.landWrapper {
+	background-color: darkblue;
+	width: 40vw;
+}
+
+.game__land {
+	background-color: aquamarine;
+	border: 2px solid white;
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 45px;
+	font-size: 2rem;
+	color: burlywood;
+	box-shadow: 5px 5px 4px -3px #a19090;
+	transition: all 0.2s;
+}
+
+.game__land:hover {
+	box-shadow: 5px 5px 4px 3px #a19090;
+	transform: scale(1.05);
+}

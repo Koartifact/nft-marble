@@ -1,0 +1,20 @@
+.game__container {
+	display: flex;
+	justify-content: space-between;
+	min-height: 90vh;
+	background-color: beige;
+}
+
+.game__container .game__left_side {
+	width: 23%;
+	border-right: 1px solid lightcoral;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding-top: 5rem;
+	background-color: antiquewhite;
+}
+
+.game__container .game__right_side {
+	width: 75%;
+}

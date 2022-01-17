@@ -1,0 +1,134 @@
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	padding: 0.5rem 2.2rem;
+	background-color: #ecfeff;
+	z-index: 888;
+}
+
+.header .header__logo {
+	display: flex;
+	align-items: center;
+}
+
+.header .header__logo .header__logo__img {
+	width: 3.5rem;
+	margin-right: 1rem;
+}
+
+.header .header__logo .header__logo__title {
+	letter-spacing: 2px;
+}
+.header__account {
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+}
+
+.header__account__user-icon {
+	background-color: #fff;
+	height: 4rem;
+	width: 4rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	border: 2px solid #9ba8e0;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.header__account__user-icon:hover {
+	box-shadow: 0px 5px 15px -5px #214aff;
+}
+
+.header__account__address {
+	border: 2px solid #c4ccf1;
+	background-color: #fff;
+	color: #4968f3;
+	padding: 0.5rem;
+	border-radius: 15px;
+	font-size: 0.8rem;
+	height: 2.3rem;
+	transition: all 0.2s;
+}
+
+.header__account__address:hover {
+	transform: scale(1.025);
+	box-shadow: 0px 5px 15px -5px #214aff;
+	border: 2px solid #c4ccf1;
+}
+
+.search_box_container {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* SearchBox */
+.search_box {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 2px solid #c4ccf1;
+	border-radius: 15px;
+	transition: all 0.2s;
+}
+
+.search_box:hover {
+	transform: scale(1.035);
+}
+
+.search_box .search_box__input {
+	width: 35rem;
+	height: 70px;
+	padding: 1rem;
+	border: none;
+	transition: 0.2s;
+	font-size: 1rem;
+	outline: none;
+}
+
+.search_box .search_box__input:focus::placeholder {
+	color: transparent;
+}
+
+.search_box .search_box__btn {
+	height: 70px;
+	padding: 1rem;
+	border: none;
+	background-color: #fff;
+	border-top-left-radius: 25px;
+	border-bottom-left-radius: 25px;
+	cursor: pointer;
+	font-size: 2rem;
+	display: flex;
+	align-items: center;
+}
+.search_box .search_box__remove_btn {
+	height: 70px;
+	padding: 1rem;
+	border: none;
+	background-color: #fff;
+	border-top-right-radius: 25px;
+	border-bottom-right-radius: 25px;
+	cursor: pointer;
+	font-size: 2rem;
+}
+
+.search_box .btn:disabled {
+	cursor: not-allowed;
+}
+
+.fa,
+.fab,
+.fas {
+	font-size: 2rem;
+	color: #9ba8e0;
+}

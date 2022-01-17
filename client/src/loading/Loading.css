@@ -1,0 +1,20 @@
+.spinner_container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999;
+}
+.spinner_container .spinner__img {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 999;
+	background-color: transparent;
+}
+
+.dark {
+	background-color: rgba(70, 67, 67, 0.5);
+}
