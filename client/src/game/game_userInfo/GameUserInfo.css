@@ -15,7 +15,7 @@
 .game__user_infos .game__user_info__finance {
 	display: flex;
 	flex-direction: column;
-	gap: 3rem;
+	gap: 1rem;
 }
 
 .game__user_infos .game__user_info__finance .game__connect_wallet {

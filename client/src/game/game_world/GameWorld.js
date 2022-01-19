@@ -14,7 +14,9 @@ function GameWorld() {
 	return (
 		<div
 			className='game__world__container'
-			style={{ gridTemplateColumns: `repeat(${WORLD_LENGTH}, 1fr)` }}>
+			style={{
+				gridTemplateColumns: `repeat(${WORLD_LENGTH}, 1fr)`,
+			}}>
 			{lands.map((land, index) => {
 				return (
 					<GameLand key={land.id} landInfo={LandInfos[index]} land={land} />

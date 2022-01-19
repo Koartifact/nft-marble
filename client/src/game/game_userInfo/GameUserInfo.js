@@ -8,6 +8,11 @@ function GameUserInfo() {
 		state.setAccount,
 	]);
 
+	const [erc721list, setErc721list] = useStore((state) => [
+		state.erc721list,
+		state.setErc721list,
+	]);
+
 	const [isLoading, setIsLoading] = useStore((state) => [
 		state.isLoading,
 		state.setIsLoading,
@@ -28,7 +33,18 @@ function GameUserInfo() {
 			<h1 className='game__user_info__title'>My Information</h1>
 			<div className='game__user_info__finance'>
 				{account ? (
-					<p>My Tokens: 0 TokenSymbol</p>
+					<>
+						<p>My Tokens</p>
+						<div style={{ display: 'flex', flexWrap: 'wrap' }}>
+							{erc721list ? (
+								erc721list.map((token) => {
+									return <div key={token.tokenId}>{String(token.tokenId)}</div>;
+								})
+							) : (
+								<div>You have no token</div>
+							)}
+						</div>
+					</>
 				) : (
 					<div className='game__connect_wallet' onClick={connectWallet}>
 						<img src='/img/metamask.png' alt='' />

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import _ from 'lodash';
 import Web3 from 'web3';
 
 import abi from '../data-stores/tokenAbi.json';
@@ -14,10 +15,19 @@ import { useStore } from '../store';
 
 function Game() {
 	const [lands, setLands] = useStore((state) => [state.lands, state.setLands]);
+	const [account, setAccount] = useStore((state) => [
+		state.account,
+		state.setAccount,
+	]);
+	const [erc721list, setErc721list] = useStore((state) => [
+		state.erc721list,
+		state.setErc721list,
+	]);
 	const [isLoading, setIsLoading] = useStore((state) => [
 		state.isLoading,
 		state.setIsLoading,
 	]);
+
 	useEffect(() => {
 		setIsLoading(true);
 		async function fetchLands() {
@@ -28,10 +38,51 @@ function Game() {
 			);
 			const cLands = await tokenContract.methods.getAllLands().call();
 			await setLands(cLands);
-			await setIsLoading(false);
+			// await setIsLoading(false);
+		}
+		// TODO
+		async function tokenList() {
+			console.log('addNewErc721 called');
+			setIsLoading(true);
+			if (account) {
+				try {
+					const web3 = new Web3('HTTP://127.0.0.1:7545');
+					const tokenContract = await new web3.eth.Contract(
+						JSON.parse(abi),
+						address
+					);
+					const totalSupply = await tokenContract.methods.totalSupply().call();
+					// token id arr
+					let arr = [];
+					// 비교할 token 객체 arr
+					let tokens = [];
+					for (let i = 0; i < totalSupply; i++) {
+						arr.push(i);
+					}
+					for (let tokenId of arr) {
+						let tokenOwner = await tokenContract.methods
+							.ownerOf(tokenId)
+							.call();
+						if (String(tokenOwner).toLowerCase() === account) {
+							tokens.push({ tokenId });
+						}
+					}
+					// tokens + erc721list 후 tokenId로 중복제거
+					let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
+					await setErc721list(uniqArr);
+					await setIsLoading(false);
+				} catch (error) {
+					alert(error);
+					setIsLoading(false);
+				}
+			} else {
+				setIsLoading(false);
+				return;
+			}
 		}
 		fetchLands();
-	}, []);
+		tokenList();
+	}, [account]);
 
 	return (
 		<div className='game__container'>

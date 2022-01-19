@@ -17,4 +17,6 @@ export const useStore = create((set) => ({
 	isLoading: false,
 	setIsLoading: (isLoading) => set(() => ({ isLoading })),
 	nationInfos,
+	erc721list: [],
+	setErc721list: (erc721list) => set(() => ({ erc721list })),
 }));

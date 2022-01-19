@@ -65,7 +65,7 @@ function HomeDescription() {
 				vel, illo, consequuntur quibusdam repellendus exercitationem magni.
 			</p>
 			<div className='home__description__button_list'>
-				<button>Buy Land</button>
+				<button>Tutorial</button>
 				{/* 클릭 시 게임 월드 페이지로 이동 */}
 				<button>
 					<Link to='/game'>Play Game</Link>

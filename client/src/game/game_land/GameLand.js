@@ -17,7 +17,7 @@ function GameLand({ land, landInfo }) {
 			title={`
 TokenId: ${land.id}
 CountryName: ${land.countryName}
-Auction Available: ${land.isAvailable}
+Auction Available: ${land.isAuctionAvailable}
 Latest Price: ${land.latestPrice}
 `}
 			to={`/land/${land.countryName.replaceAll(' ', '')}`}
