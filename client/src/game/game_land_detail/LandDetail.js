@@ -118,7 +118,7 @@ function LandDetail() {
 		tokenList();
 		fetchContractOwner();
 		setIsLoading(false);
-	}, [account]);
+	}, [account, cn]);
 
 	// getting flag imageUrl
 	useEffect(() => {

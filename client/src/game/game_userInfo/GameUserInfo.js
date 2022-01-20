@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '../../store';
 import './GameUserInfo.css';
+import UserInfoToken from './UserInfoToken';
 
 function GameUserInfo() {
 	const [account, setAccount] = useStore((state) => [
@@ -30,15 +31,26 @@ function GameUserInfo() {
 
 	return (
 		<div className='game__user_infos'>
-			<h1 className='game__user_info__title'>My Information</h1>
+			<h1 className='game__user_info__title'>My Tokens</h1>
 			<div className='game__user_info__finance'>
 				{account ? (
 					<>
-						<p>My Tokens</p>
-						<div style={{ display: 'flex', flexWrap: 'wrap' }}>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								gap: '15px',
+								flexWrap: 'wrap',
+								marginTop: '2rem',
+							}}>
 							{erc721list ? (
 								erc721list.map((token) => {
-									return <div key={token.tokenId}>{String(token.tokenId)}</div>;
+									return (
+										<UserInfoToken
+											key={token.tokenId}
+											tokenId={token.tokenId}
+										/>
+									);
 								})
 							) : (
 								<div>You have no token</div>

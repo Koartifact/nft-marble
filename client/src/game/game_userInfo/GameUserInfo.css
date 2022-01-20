@@ -2,9 +2,9 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	background-color: rgb(240, 243, 243);
+	background-color: rgb(245, 212, 212);
 	border-radius: 45px;
-	max-width: 100%;
+	max-width: 80%;
 	padding: 5rem;
 }
 
@@ -15,6 +15,8 @@
 .game__user_infos .game__user_info__finance {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	gap: 1rem;
 }
 
