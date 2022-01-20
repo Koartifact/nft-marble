@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import _ from 'lodash';
+// import { fetchLandDetail, tokenList } from '../../api/api';
 
 import abi from '../../data-stores/tokenAbi.json';
 import address from '../../data-stores/tokenAddr';
@@ -10,10 +11,13 @@ import { useStore } from '../../store';
 
 import GameUserInfo from '../game_userInfo/GameUserInfo';
 import Loading from '../../loading/Loading';
+import BidModal from './BidModal';
 
 import './LandDetail.css';
 
 function LandDetail() {
+	const [isLoading, setIsLoading] = useState(false);
+	const [isBidModalOpen, setIsBidModalOpen] = useState(false);
 	// cn = countryName
 	const { cn } = useParams();
 	// from local js file
@@ -21,18 +25,24 @@ function LandDetail() {
 
 	// loading state
 	const account = useStore((state) => state.account);
+	// contractOwner
+	const [contractOwner, setContractOwner] = useStore((state) => [
+		state.contractOwner,
+		state.setContractOwner,
+	]);
 
 	// loading state
-	const [isLoading, setIsLoading] = useStore((state) => [
-		state.isLoading,
-		state.setIsLoading,
-	]);
+	// const [isLoading, setIsLoading] = useStore((state) => [
+	// 	state.isLoading,
+	// 	state.setIsLoading,
+	// ]);
 
 	const [erc721list, setErc721list] = useStore((state) => [
 		state.erc721list,
 		state.setErc721list,
 	]);
 
+	/// need to relocate
 	async function fetchLandDetail() {
 		let land;
 		const web3 = new Web3('HTTP://127.0.0.1:7545');
@@ -44,11 +54,13 @@ function LandDetail() {
 		// SouthKorea => South Korea => getTokenDetail('South Korea')
 		if (cn === 'SouthKorea') {
 			land = await tokenContract.methods.getTokenDetail('South Korea').call();
+			// land.latestPrice = Web3.utils.fromWei(land[3], 'ether');
 		} else {
 			land = await tokenContract.methods.getTokenDetail(cn).call();
 		}
 		setLand(land);
 	}
+
 	async function tokenList() {
 		// setIsLoading(true);
 		if (account) {
@@ -77,8 +89,8 @@ function LandDetail() {
 					}
 				}
 				// tokens + erc721list 후 tokenId로 중복제거
-				let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
-				await setErc721list(uniqArr);
+				// let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
+				await setErc721list(tokens);
 			} catch (error) {
 				alert(error);
 			}
@@ -87,10 +99,24 @@ function LandDetail() {
 		}
 	}
 
+	const fetchContractOwner = async () => {
+		const web3 = new Web3('HTTP://127.0.0.1:7545');
+		const tokenContract = await new web3.eth.Contract(JSON.parse(abi), address);
+		const contractOwner = await tokenContract.methods.owner().call();
+		await setContractOwner(contractOwner);
+		// await console.log(contractOwner);
+	};
+	/// need to relocate
 	useEffect(() => {
+		// setIsLoading(true);
+		// setLand(fetchLandDetail(account, cn));
+		// setErc721list(tokenList(account, erc721list));
+		// setIsLoading(false);
+
 		setIsLoading(true);
 		fetchLandDetail();
 		tokenList();
+		fetchContractOwner();
 		setIsLoading(false);
 	}, [account]);
 
@@ -105,6 +131,7 @@ function LandDetail() {
 
 	const [nation, setNation] = useState({});
 	const [land, setLand] = useState({});
+
 	// TODO
 	// need to add start price
 	const startAuction = async (account, tokenId, startPrice) => {
@@ -149,6 +176,27 @@ function LandDetail() {
 				setIsLoading(false);
 			});
 	};
+	const buyLand = async (account, tokenId) => {
+		setIsLoading(true);
+		const web3 = new Web3('HTTP://127.0.0.1:7545');
+		const tokenContract = await new web3.eth.Contract(
+			JSON.parse(abi),
+			address,
+			{ from: account, gas: 10000000 }
+		);
+		await tokenContract.methods
+			.buyLand(account, tokenId)
+			.send()
+			.on('receipt', (receipt) => {
+				fetchLandDetail();
+				tokenList();
+				setIsLoading(false);
+			})
+			.catch((error) => {
+				alert(error);
+				setIsLoading(false);
+			});
+	};
 	return (
 		<div className='land_details__container'>
 			{isLoading ? (
@@ -173,24 +221,40 @@ function LandDetail() {
 							</h1>
 							<div className='land_details__token__details'>
 								<div className='land_details__token__infos'>
-									<ul>
-										<li>TokenId: {land.id}</li>
-										<li>Country Name: {land.countryName}</li>
-										<li>Auction State: {String(land.isAuctionAvailable)}</li>
-										<li>
-											Lastest Price:{' '}
-											{/* {Web3.utils.fromWei(String(land.latestPrice), 'ether')}{' '} */}
-											{land.latestPrice}
-											wei
-										</li>
-										<li>OwnedBy: {land.ownedBy}</li>
-									</ul>
+									{land[3] ? (
+										<ul>
+											<li>TokenId: {land.id}</li>
+											<li>Country Name: {land.countryName}</li>
+											<li>Auction State: {String(land.isAuctionAvailable)}</li>
+											<li>
+												LatestPrice:{' '}
+												{Web3.utils.fromWei(land.latestPrice, 'ether')} ether
+											</li>
+											<li>OwnedBy: {land.ownedBy}</li>
+										</ul>
+									) : null}
 								</div>
+								{Boolean(
+									account &&
+										account !== contractOwner &&
+										land &&
+										land.ownedBy?.toLowerCase() === contractOwner?.toLowerCase()
+								) && (
+									<div className='land_details__auction__container'>
+										<h1>Buy Land</h1>
+										<button
+											className='land_details__button'
+											onClick={() => buyLand(account, land.id)}>
+											Buy Land
+										</button>
+									</div>
+								)}
 								{account &&
+									land &&
 									!land.isAuctionAvailable &&
-									land.ownedBy.toLowerCase() === account && (
+									land.ownedBy?.toLowerCase() === account && (
 										<div className='land_details__auction__container'>
-											<h1>Highest Bid: </h1>
+											<h1>Start Auction</h1>
 											<button
 												className='land_details__button'
 												onClick={() => startAuction(account, land.id, 1000)}>
@@ -199,16 +263,22 @@ function LandDetail() {
 										</div>
 									)}
 								{account &&
+									land &&
 									land.isAuctionAvailable &&
-									land.ownedBy.toLowerCase() !== account && (
+									land.ownedBy?.toLowerCase() !== account && (
 										<div className='land_details__auction__container'>
 											<h1>Highest Bid: </h1>
-											<button className='land_details__button'>Bid</button>
+											<button
+												className='land_details__button'
+												onClick={() => setIsBidModalOpen(true)}>
+												Bid
+											</button>
 										</div>
 									)}
 								{account &&
+									land &&
 									land.isAuctionAvailable &&
-									land.ownedBy.toLowerCase() === account && (
+									land.ownedBy?.toLowerCase() === account && (
 										<div className='land_details__auction__container'>
 											<h1>Highest Bid: </h1>
 											<button

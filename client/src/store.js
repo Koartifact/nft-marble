@@ -19,4 +19,6 @@ export const useStore = create((set) => ({
 	nationInfos,
 	erc721list: [],
 	setErc721list: (erc721list) => set(() => ({ erc721list })),
+	contractOwner: '',
+	setContractOwner: (contractOwner) => set(() => ({ contractOwner })),
 }));

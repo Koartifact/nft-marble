@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+// TODO
+// Auction
 
 contract NFTMarble is ERC721Enumerable, Ownable {
     // nft 발행 갯수 제한
@@ -36,7 +38,7 @@ contract NFTMarble is ERC721Enumerable, Ownable {
 
     // Auction
     // {tokenId: [adress: balance]}
-    mapping(uint => mapping(address => uint)) public bidder;
+    mapping(uint => mapping(address => uint)) public bidderBalance;
     // {tokenId: bidderCount}
     mapping(uint => uint) public bidderCount;
     // {tokenId: bidderAddress}
@@ -73,14 +75,18 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         _nextId++;
         _totalTransactions++;
     }
-    // for testing
-    // function changeAvailableState(string memory _countryName, bool state) public {
-    //     require(isTokenOwner(getTokenDetail(_countryName).id), "Error - only token owner can change available state");
-    //     Land memory land = getTokenDetail(_countryName);
-    //     land.isAvailable = state;
-    //     _tokenDetails[_countryName] = land;
-    //     _tokenDetailsById[_tokenDetails[_countryName].id] = land;
-    // }
+
+    /*
+        Buy land 
+     */
+    function buyLand(address _from, uint _tokenId) public {
+        require(owner() != _from, "Error - contract owner can't trigger buyLand func");
+        Land memory _land = getTokenDetailById(_tokenId);
+        require(owner() == _land.ownedBy, "Error - this land owned by user");
+        _land.ownedBy = _from;
+        _changeLandState(_tokenId, _land);
+        transferFrom(owner(), _from, _tokenId);
+    } 
 
     function totalTransactionCount() public view returns(uint) {
         return _totalTransactions;
@@ -98,60 +104,88 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         return _lands;
     }
     // Auction Feature
-    // function buyLand(string memory _countryName) public notOwner() {
-    //  require(isAvailable(_countryName), "Error - this land is not available for auction");
-    // }
 
-    function startAuction(address _from, uint _tokenId, uint _startPrice) public {
-        require(_msgSender() != address(0), "Error - invalid address");
+    function startAuction(address _from,uint _tokenId, uint _startPrice) public {
+        require(_from != address(0), "Error - invalid address");
         require(address(getTokenDetailById(_tokenId).ownedBy) == _from, "Error - need to owner of this token");
         require(getTokenDetailById(_tokenId).isAuctionAvailable == false, "Error - this token already on the auction");
-        Land memory land = getTokenDetailById(_tokenId);
-        land.isAuctionAvailable = true;
+        Land memory _land = getTokenDetailById(_tokenId);
+        _land.isAuctionAvailable = true;
         // need to refactor
-        _tokenDetailsById[_tokenId] = land;
-        _tokenDetails[getTokenDetailById(_tokenId).countryName] = land;
-        _lands[_tokenId] = land;
+        _changeLandState(_tokenId, _land);
+        highestBid[_tokenId] = _startPrice;
+        highestBidder[_tokenId] = _from;
     }
 
     // function bid(uint _tokenId) public payable notOwner {
     function bid(address _from, uint _tokenId) public payable {
+        require(_msgSender() != address(0), "Error - invalid address");
+        require(getTokenDetailById(_tokenId).ownedBy == _msgSender(), "Error - token owner can't bid");
         require(getTokenDetailById(_tokenId).isAuctionAvailable, "Error - Auction is not available for this token");
         require(msg.value >= 100, "Error - bid price need to bigger than 100 wei");
-        if (bidder[_tokenId][_from] == 0) {
+        // incoming bid need to be bigger than current bid
+        if (bidderBalance[_tokenId][_from] == 0) {
+            require(msg.value > highestBid[_tokenId], "Error - bid need to be bigger than previous highest bid");
+            bidderBalance[_tokenId][_from] = msg.value;
             bidderCount[_tokenId]++;
+        } else {
+            require(bidderBalance[_tokenId][_from] + msg.value > highestBid[_tokenId], "Error - bid need to be bigger than previous highest bid");
+            bidderBalance[_tokenId][_from] = bidderBalance[_tokenId][_from] + msg.value;     
         }
 
-        // TODO
-        // incoming bid need to be bigger than current bid
-        // bidder[_tokenId][_msgSender()] = msg.value;
-        bidder[_tokenId][_from] = msg.value;
-        highestBidder[_tokenId] = _from;
-        // highestBidder[_tokenId] = _msgSender();
+        highestBidder[_tokenId] = payable(_from);
+        highestBid[_tokenId] = bidderBalance[_tokenId][_from];
     }
 
-    function closingAuction(uint _tokenId) public {
+    function closingAuction(address _from, uint _tokenId) public {
         bool auctionAvailable = getTokenDetailById(_tokenId).isAuctionAvailable;
         require(auctionAvailable, "Error - Auction is already closed");
-        require(_msgSender() == getTokenDetailById(_tokenId).ownedBy, "Error - only token owner triggers this function");
-        Land memory land = getTokenDetailById(_tokenId);
-        land.isAuctionAvailable = false;
-        _tokenDetailsById[_tokenId] = land;
-        _tokenDetails[getTokenDetailById(_tokenId).countryName] = land;
-        transferFrom(getTokenDetailById(_tokenId).ownedBy, highestBidder[_tokenId], _tokenId);
+        require(_from == getTokenDetailById(_tokenId).ownedBy, "Error - only token owner triggers this function");
+        Land memory _land = getTokenDetailById(_tokenId);
+        _land.isAuctionAvailable = false;
+
+        if(highestBidder[_tokenId] == _land.ownedBy) {
+            delete highestBidder[_tokenId];
+            delete highestBid[_tokenId];
+        } else {
+            _land.latestPrice = highestBid[_tokenId];
+            _land.ownedBy = highestBidder[_tokenId];
+            transferFrom(_from, highestBidder[_tokenId], _tokenId);
+        }
+        _changeLandState(_tokenId, _land);
         // TODO
         // refund every bidder's balance except beneficiary
-    }
-
-    function auctionState(address _bidderAddr, uint _tokenId) public view returns(uint) {
-        return bidder[_tokenId][_bidderAddr];
+        //
+        //
+        //
+        //
     }
 
     function getTokenBidderCount(uint _tokenId) public view returns(uint) {
         return bidderCount[_tokenId];
     }
 
+    function getHighestBid(uint _tokenId) public view returns(uint) {
+        return highestBid[_tokenId];
+    }
+
+    function getHighestBidder(uint _tokenId) public view returns(address) {
+        return highestBidder[_tokenId];
+    }
+
+    // auction testing function collection
+    function auctionState(address _bidderAddr, uint _tokenId) public view returns(uint) {
+        return bidderBalance[_tokenId][_bidderAddr];
+    }
     // Auction Feature End
+
+    // private helper functions
+    function _changeLandState(uint _tokenId, Land memory _land) private {
+        _tokenDetailsById[_tokenId] = _land;
+        _tokenDetails[getTokenDetailById(_tokenId).countryName] = _land;
+        _lands[_tokenId] = _land;
+    }
+    // private helper functions end
 
     // TODO inherit
     // need to fix
@@ -161,11 +195,15 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         uint256 tokenId
     ) public override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         Land memory land = getTokenDetailById(tokenId);
         land.ownedBy = to;
         _tokenDetailsById[tokenId] = land;
         _tokenDetails[getTokenDetailById(tokenId).countryName] = land;
         _transfer(from, to, tokenId);
+    }
+
+    // default eth receive func
+    receive() external payable {
+
     }
 }

@@ -19,6 +19,10 @@ function App() {
 		state.setIsLoading,
 	]);
 	const [web3, setWeb3] = useStore((state) => [state.web3, state.setWeb3]);
+	const [contractOwner, setContractOwner] = useStore((state) => [
+		state.contractOwner,
+		state.setContractOwner,
+	]);
 
 	useEffect(() => {
 		if (typeof window.ethereum !== 'undefined') {
@@ -30,6 +34,20 @@ function App() {
 				console.log(err);
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		const fetchContractOwner = async () => {
+			const web3 = new Web3('HTTP://127.0.0.1:7545');
+			const tokenContract = await new web3.eth.Contract(
+				JSON.parse(abi),
+				address
+			);
+			const contractOwner = await tokenContract.methods.owner().call();
+			setContractOwner(contractOwner);
+		};
+		fetchContractOwner();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

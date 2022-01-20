@@ -8,18 +8,18 @@ function Navbar() {
 		<nav className='navbar__container'>
 			<ul>
 				<li>
+					<Link to='/' className='navbar_item'>
+						Home
+					</Link>
+				</li>
+				<li>
 					<Link to='/game' className='navbar_item'>
-						Play game
+						Play Game
 					</Link>
 				</li>
 				<li>
 					<Link to='#' className='navbar_item'>
-						Navbar PlaceHolder
-					</Link>
-				</li>
-				<li>
-					<Link to='#' className='navbar_item'>
-						Navbar PlaceHolder
+						Tutorial
 					</Link>
 				</li>
 				<li>

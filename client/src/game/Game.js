@@ -29,7 +29,6 @@ function Game() {
 	]);
 
 	useEffect(() => {
-		setIsLoading(true);
 		async function fetchLands() {
 			const web3 = new Web3('HTTP://127.0.0.1:7545');
 			const tokenContract = await new web3.eth.Contract(
@@ -38,7 +37,6 @@ function Game() {
 			);
 			const cLands = await tokenContract.methods.getAllLands().call();
 			await setLands(cLands);
-			// await setIsLoading(false);
 		}
 		// TODO
 		async function tokenList() {
@@ -70,35 +68,27 @@ function Game() {
 					// tokens + erc721list 후 tokenId로 중복제거
 					let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
 					await setErc721list(uniqArr);
-					await setIsLoading(false);
 				} catch (error) {
 					alert(error);
-					setIsLoading(false);
 				}
 			} else {
-				setIsLoading(false);
 				return;
 			}
 		}
 		fetchLands();
 		tokenList();
+		setIsLoading(false);
 	}, [account]);
 
 	return (
 		<div className='game__container'>
-			{isLoading ? (
-				<Loading />
-			) : (
-				<>
-					<div className='game__left_side'>
-						<GameUserInfo />
-					</div>
+			<div className='game__left_side'>
+				<GameUserInfo />
+			</div>
 
-					<div className='game__right_side'>
-						<GameWorld />
-					</div>
-				</>
-			)}
+			<div className='game__right_side'>
+				<GameWorld />
+			</div>
 		</div>
 	);
 }
