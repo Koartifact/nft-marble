@@ -9,6 +9,7 @@
 	padding: 0.5rem 2.2rem;
 	background-color: #ecfeff;
 	z-index: 888;
+	height: 6rem;
 }
 
 .header .header__logo {
