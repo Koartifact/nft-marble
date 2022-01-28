@@ -25,3 +25,9 @@
 .navbar__container ul li a:hover {
 	box-shadow: 5px 5px 0px 0px #d3cccc;
 }
+
+@media only screen and (max-width: 1050px) {
+	.navbar__container ul {
+		justify-content: center;
+	}
+}

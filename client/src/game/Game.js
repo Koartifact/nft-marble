@@ -68,27 +68,35 @@ function Game() {
 					// tokens + erc721list 후 tokenId로 중복제거
 					let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
 					await setErc721list(uniqArr);
+					setIsLoading(false);
 				} catch (error) {
 					alert(error);
+					setIsLoading(false);
 				}
 			} else {
+				setIsLoading(false);
 				return;
 			}
 		}
 		fetchLands();
 		tokenList();
-		setIsLoading(false);
 	}, [account]);
 
 	return (
 		<div className='game__container'>
-			<div className='game__left_side'>
-				<GameUserInfo />
-			</div>
+			{isLoading ? (
+				<Loading />
+			) : (
+				<>
+					<div className='game__left_side'>
+						<GameUserInfo />
+					</div>
 
-			<div className='game__right_side'>
-				<GameWorld />
-			</div>
+					<div className='game__right_side'>
+						<GameWorld />
+					</div>
+				</>
+			)}
 		</div>
 	);
 }

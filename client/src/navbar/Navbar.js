@@ -22,11 +22,6 @@ function Navbar() {
 						Tutorial
 					</Link>
 				</li>
-				<li>
-					<Link to='#' className='navbar_item'>
-						Navbar PlaceHolder
-					</Link>
-				</li>
 			</ul>
 		</nav>
 	);

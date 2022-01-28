@@ -1,8 +1,3 @@
-.landWrapper {
-	background-color: darkblue;
-	width: 40vw;
-}
-
 .game__land {
 	background-color: aquamarine;
 	border: 2px solid white;
@@ -20,4 +15,9 @@
 .game__land:hover {
 	box-shadow: 5px 5px 4px 3px #a19090;
 	transform: scale(1.05);
+}
+@media only screen and (max-width: 700px) {
+	.game__land {
+		font-size: 1rem;
+	}
 }

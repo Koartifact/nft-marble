@@ -8,15 +8,10 @@ import './GameWorld.css';
 import { useStore } from '../../store';
 
 function GameWorld() {
-	const WORLD_LENGTH = 6;
 	const [lands, setLands] = useStore((state) => [state.lands, state.setLands]);
 
 	return (
-		<div
-			className='game__world__container'
-			style={{
-				gridTemplateColumns: `repeat(${WORLD_LENGTH}, 1fr)`,
-			}}>
+		<div className='game__world__container'>
 			{lands.map((land, index) => {
 				return (
 					<GameLand key={land.id} landInfo={LandInfos[index]} land={land} />

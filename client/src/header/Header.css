@@ -133,3 +133,22 @@
 	font-size: 2rem;
 	color: #9ba8e0;
 }
+@media only screen and (max-width: 850px) {
+	.search_box {
+		display: none;
+	}
+	.header__account__address {
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 1260px) {
+	.search_box {
+		height: 5rem;
+	}
+	.search_box .search_box__input,
+	.search_box .search_box__btn,
+	.search_box .search_box__remove_btn {
+		height: 100%;
+	}
+}

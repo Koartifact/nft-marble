@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -17,27 +18,32 @@ function Header({ clickWallet, accountAddr }) {
 		<div className='header'>
 			<Link to='/'>
 				<div className='header__logo'>
-					<img src='/img/opensea.svg' alt='' className='header__logo__img' />
+					<img src='/img/kr.svg' alt='' className='header__logo__img' />
 					<h3 className='header__logo__title'>NFT-MARBLE</h3>
 				</div>
 			</Link>
 
 			<div className='search_box'>
 				<a
+					disable='true'
 					className='search_box__btn'
-					href={`https://ropsten.etherscan.io/address/${searchInput}`}
-					target='_blank'
+					// href={`https://ropsten.etherscan.io/address/${searchInput}`}
+					// href='#'
+					// target='_blank'
 					rel='noopener noreferrer'>
 					<i className='fas fa-search'></i>
 				</a>
 				<input
 					className='search_box__input'
 					type='text'
-					placeholder='search contract address, wallet address.. from Ropsten Testnet Network '
+					// placeholder='search contract address, wallet address.. from Ropsten Testnet Network '
+					placeholder='현재 truffle local 개발환경에서의 기능들만 구현되어있습니다.'
 					onChange={changeInputHandler}
 					value={searchInput}
+					readOnly
 				/>
 				<button
+					disable='true'
 					className='search_box__remove_btn'
 					onClick={clickClearSearchInputHandler}>
 					<i className='fas fa-backspace'></i>

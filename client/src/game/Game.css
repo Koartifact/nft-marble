@@ -18,3 +18,19 @@
 .game__container .game__right_side {
 	width: 75%;
 }
+
+@media only screen and (max-width: 1050px) {
+	.game__container {
+		flex-direction: column;
+		align-items: center;
+		font-size: 8px;
+	}
+	.game__container .game__left_side {
+		width: 100%;
+		padding-top: 0;
+	}
+	.game__container .game__right_side {
+		width: 100%;
+		height: 100vh;
+	}
+}

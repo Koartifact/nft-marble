@@ -1,0 +1,79 @@
+.modal_container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	z-index: 999;
+	background-color: rgba(70, 67, 67, 0.5);
+}
+.modal {
+	position: absolute;
+	width: 30rem;
+	min-height: 30rem;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 999;
+	border-radius: 15px;
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-weight: bold;
+	box-shadow: 0px 5px 15px -13px #505155;
+
+	background-image: linear-gradient(
+		to right bottom,
+		rgba(245, 245, 244, 1) 0%,
+		rgba(194, 224, 228, 1) 50%,
+		rgba(45, 219, 203, 0.25) 100%
+	);
+}
+
+.modal .modal__title {
+	margin-bottom: 5rem;
+	text-align: center;
+}
+.modal .modal__input {
+	width: 100%;
+}
+
+.modal .modal__input input {
+	width: 100%;
+	height: 5rem;
+	margin-bottom: 4rem;
+	padding: 2rem;
+	font-size: 1.5rem;
+	border: 1px solid black;
+	border-radius: 15px;
+}
+
+.modal .modal__button__container {
+	display: flex;
+}
+
+.modal .modal__button__container .modal__submit__button {
+	padding: 2rem;
+	cursor: pointer;
+}
+
+.modal .modal__button__container .modal__submit__button i {
+	color: green;
+}
+
+.modal .modal__button__container .modal__cancel__button {
+	padding: 2rem;
+	cursor: pointer;
+}
+
+.modal .modal__button__container .modal__cancel__button i {
+	color: red;
+}
+
+.fas.fa-ban,
+.far.fa-check-circle {
+	font-size: 3rem;
+	color: #9ba8e0;
+}

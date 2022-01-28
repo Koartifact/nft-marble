@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
-import _ from 'lodash';
-// import { fetchLandDetail, tokenList } from '../../api/api';
 
 import abi from '../../data-stores/tokenAbi.json';
 import address from '../../data-stores/tokenAddr';
@@ -18,6 +16,9 @@ import './LandDetail.css';
 function LandDetail() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+	const [highestBid, setHighestBid] = useState(0);
+	const [startPrice, setStartPrice] = useState(0);
+
 	// cn = countryName
 	const { cn } = useParams();
 	// from local js file
@@ -30,12 +31,6 @@ function LandDetail() {
 		state.contractOwner,
 		state.setContractOwner,
 	]);
-
-	// loading state
-	// const [isLoading, setIsLoading] = useStore((state) => [
-	// 	state.isLoading,
-	// 	state.setIsLoading,
-	// ]);
 
 	const [erc721list, setErc721list] = useStore((state) => [
 		state.erc721list,
@@ -54,15 +49,28 @@ function LandDetail() {
 		// SouthKorea => South Korea => getTokenDetail('South Korea')
 		if (cn === 'SouthKorea') {
 			land = await tokenContract.methods.getTokenDetail('South Korea').call();
-			// land.latestPrice = Web3.utils.fromWei(land[3], 'ether');
 		} else {
 			land = await tokenContract.methods.getTokenDetail(cn).call();
 		}
+		await tokenContract.methods
+			.getHighestBid(land.id)
+			.call()
+			.then((hb) => {
+				if (hb === String(0)) {
+					if (land.latestPrice === 0) {
+						setStartPrice(10e13);
+					} else {
+						setStartPrice(Number(land.latestPrice));
+						setHighestBid(Number(hb));
+					}
+				} else {
+					setHighestBid(Number(hb));
+				}
+			});
 		setLand(land);
 	}
 
 	async function tokenList() {
-		// setIsLoading(true);
 		if (account) {
 			try {
 				const web3 = new Web3('HTTP://127.0.0.1:7545');
@@ -108,11 +116,6 @@ function LandDetail() {
 	};
 	/// need to relocate
 	useEffect(() => {
-		// setIsLoading(true);
-		// setLand(fetchLandDetail(account, cn));
-		// setErc721list(tokenList(account, erc721list));
-		// setIsLoading(false);
-
 		setIsLoading(true);
 		fetchLandDetail();
 		tokenList();
@@ -132,10 +135,9 @@ function LandDetail() {
 	const [nation, setNation] = useState({});
 	const [land, setLand] = useState({});
 
-	// TODO
-	// need to add start price
 	const startAuction = async (account, tokenId, startPrice) => {
 		setIsLoading(true);
+		console.log(startPrice);
 		const web3 = new Web3('HTTP://127.0.0.1:7545');
 		const tokenContract = await new web3.eth.Contract(
 			JSON.parse(abi),
@@ -143,7 +145,8 @@ function LandDetail() {
 			{ from: account, gas: 10000000 }
 		);
 		await tokenContract.methods
-			.startAuction(account, tokenId, startPrice)
+			// somehow evm convert string to uint type
+			.startAuction(account, tokenId, String(startPrice))
 			.send()
 			.on('receipt', (receipt) => {
 				fetchLandDetail();
@@ -166,7 +169,6 @@ function LandDetail() {
 			.closingAuction(account, tokenId)
 			.send()
 			.on('receipt', (receipt) => {
-				console.log(receipt);
 				fetchLandDetail();
 				tokenList();
 				setIsLoading(false);
@@ -197,12 +199,22 @@ function LandDetail() {
 				setIsLoading(false);
 			});
 	};
+
 	return (
 		<div className='land_details__container'>
 			{isLoading ? (
 				<Loading />
 			) : (
 				<>
+					{isBidModalOpen && (
+						<BidModal
+							setIsBidModalOpen={setIsBidModalOpen}
+							tokenId={land.id}
+							fetchLandDetail={fetchLandDetail}
+							tokenList={tokenList}
+							highestBid={highestBid}
+						/>
+					)}
 					<div className='land_details__left_side'>
 						<GameUserInfo />
 					</div>
@@ -230,26 +242,31 @@ function LandDetail() {
 												LatestPrice:{' '}
 												{Web3.utils.fromWei(land.latestPrice, 'ether')} ether
 											</li>
-											<li>OwnedBy: {land.ownedBy}</li>
+											<li>
+												OwnedBy:{' '}
+												{land.ownedBy === contractOwner
+													? 'Contract Owner'
+													: land.ownedBy}
+											</li>
 										</ul>
 									) : null}
 								</div>
-								{Boolean(
-									account &&
-										account !== contractOwner &&
-										land &&
-										land.ownedBy?.toLowerCase() === contractOwner?.toLowerCase()
-								) && (
-									<div className='land_details__auction__container'>
-										<h1>Buy Land</h1>
-										<button
-											className='land_details__button'
-											onClick={() => buyLand(account, land.id)}>
-											Buy Land
-										</button>
-									</div>
-								)}
 								{account &&
+									account !== contractOwner.toLowerCase() &&
+									land &&
+									land.ownedBy?.toLowerCase() ===
+										contractOwner?.toLowerCase() && (
+										<div className='land_details__auction__container'>
+											<h1>Buy Land</h1>
+											<button
+												className='land_details__button'
+												onClick={() => buyLand(account, land.id)}>
+												Buy Land
+											</button>
+										</div>
+									)}
+								{account &&
+									account !== contractOwner.toLowerCase() &&
 									land &&
 									!land.isAuctionAvailable &&
 									land.ownedBy?.toLowerCase() === account && (
@@ -257,17 +274,25 @@ function LandDetail() {
 											<h1>Start Auction</h1>
 											<button
 												className='land_details__button'
-												onClick={() => startAuction(account, land.id, 1000)}>
+												onClick={() => {
+													startAuction(account, land.id, startPrice);
+												}}>
 												Start Auction
 											</button>
 										</div>
 									)}
 								{account &&
+									account !== contractOwner.toLowerCase() &&
 									land &&
 									land.isAuctionAvailable &&
 									land.ownedBy?.toLowerCase() !== account && (
 										<div className='land_details__auction__container'>
-											<h1>Highest Bid: </h1>
+											<h2>
+												Highest Bid:{' '}
+												{highestBid &&
+													Web3.utils.fromWei(String(highestBid), 'ether')}{' '}
+												eth
+											</h2>
 											<button
 												className='land_details__button'
 												onClick={() => setIsBidModalOpen(true)}>
@@ -280,7 +305,13 @@ function LandDetail() {
 									land.isAuctionAvailable &&
 									land.ownedBy?.toLowerCase() === account && (
 										<div className='land_details__auction__container'>
-											<h1>Highest Bid: </h1>
+											<h2>
+												Highest Bid:{' '}
+												{highestBid &&
+													Web3.utils.fromWei(String(highestBid), 'ether')}{' '}
+												eth
+											</h2>
+
 											<button
 												className='land_details__button'
 												onClick={() => closingAuction(account, land.id)}>

@@ -186,3 +186,9 @@
 	box-shadow: 5px 5px 4px 3px #a19090;
 }
 /* 제안박스 끝 */
+
+@media only screen and (max-width: 850px) {
+	.home__description__container {
+		font-size: 0.4rem;
+	}
+}

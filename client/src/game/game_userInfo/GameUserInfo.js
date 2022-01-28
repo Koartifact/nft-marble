@@ -19,6 +19,11 @@ function GameUserInfo() {
 		state.setIsLoading,
 	]);
 
+	const [contractOwner, setContractOwner] = useStore((state) => [
+		state.contractOwner,
+		state.setContractOwner,
+	]);
+
 	// connect metamask wallet
 	const connectWallet = async () => {
 		setIsLoading(true);
@@ -31,7 +36,11 @@ function GameUserInfo() {
 
 	return (
 		<div className='game__user_infos'>
-			<h1 className='game__user_info__title'>My Tokens</h1>
+			{account !== contractOwner ? (
+				<h1 className='game__user_info__title'>My Tokens</h1>
+			) : (
+				<h1 className='game__user_info__title'>Tokens for sell</h1>
+			)}
 			<div className='game__user_info__finance'>
 				{account ? (
 					<>

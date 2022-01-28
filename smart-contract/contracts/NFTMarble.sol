@@ -116,11 +116,11 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         highestBid[_tokenId] = _startPrice;
         highestBidder[_tokenId] = _from;
     }
-
+    // TODO
     // function bid(uint _tokenId) public payable notOwner {
     function bid(address _from, uint _tokenId) public payable {
-        require(_msgSender() != address(0), "Error - invalid address");
-        require(getTokenDetailById(_tokenId).ownedBy == _msgSender(), "Error - token owner can't bid");
+        require(_from != address(0), "Error - invalid address");
+        // require(getTokenDetailById(_tokenId).ownedBy == _from, "Error - token owner can't bid");
         require(getTokenDetailById(_tokenId).isAuctionAvailable, "Error - Auction is not available for this token");
         require(msg.value >= 100, "Error - bid price need to bigger than 100 wei");
         // incoming bid need to be bigger than current bid
@@ -148,17 +148,21 @@ contract NFTMarble is ERC721Enumerable, Ownable {
             delete highestBidder[_tokenId];
             delete highestBid[_tokenId];
         } else {
+            sendEth(payable(_from), highestBid[_tokenId]);
+            // TODO refund every bidder's balance except beneficiary
             _land.latestPrice = highestBid[_tokenId];
             _land.ownedBy = highestBidder[_tokenId];
+            highestBid[_tokenId] = 0;
             transferFrom(_from, highestBidder[_tokenId], _tokenId);
         }
+        
         _changeLandState(_tokenId, _land);
-        // TODO
-        // refund every bidder's balance except beneficiary
-        //
-        //
-        //
-        //
+        
+        
+    }
+
+    function sendEth(address payable _to, uint amount) private {
+        _to.transfer(amount);
     }
 
     function getTokenBidderCount(uint _tokenId) public view returns(uint) {
@@ -200,6 +204,7 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         _tokenDetailsById[tokenId] = land;
         _tokenDetails[getTokenDetailById(tokenId).countryName] = land;
         _transfer(from, to, tokenId);
+        _totalTransactions++;
     }
 
     // default eth receive func
