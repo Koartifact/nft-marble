@@ -87,9 +87,11 @@ function HomeDescription() {
 				✨ 토큰 오너 옥션 시작 기능 <br />
 				✨ 토큰 오너 옥션 종료 기능 <br />
 				✨ 경매 참여 기능 (bid) <br />
-				✨ *Working on it: 옥션 종료시 nft 증여 기능 (경매 참가자 중 가장 높은
-				금액을 배팅한 유져) <br />✨ *Working on it: 옥션 종료시 옥션 참여자
-				(NFT 구매자를 제외한) refund 기능구현
+				✨ 옥션 종료시 nft 증여 기능 (경매 참가자 중 가장 높은 금액을 배팅한
+				유져) <br />✨ *Working on it: 옥션 종료시 옥션 참여자 (NFT 구매자를 ✨
+				*Working on it (asap): 거래 시 수수료 받기 <br />
+				✨ *Working on it (asap): 컨트랙트 오너 출금 기능 개발 <br />
+				제외한) refund 기능구현 <br />
 			</p>
 		</div>
 	);
