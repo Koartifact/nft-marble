@@ -136,9 +136,11 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         highestBidder[_tokenId] = payable(_from);
         highestBid[_tokenId] = bidderBalance[_tokenId][_from];
     }
-    // TOdo: Need to implement "refund" feature
+    // TODO: Need to implement "refund" feature
+    // TODO: after closingAuction() call => land state need to be changed 
     // Option 1: implement server => handling most of features in server
     // Option 2: implement "refund" feature in smart contract (* meh)
+    
     function closingAuction(address _from, uint _tokenId) public {
         bool auctionAvailable = getTokenDetailById(_tokenId).isAuctionAvailable;
         require(auctionAvailable, "Error - Auction is already closed");
@@ -156,6 +158,7 @@ contract NFTMarble is ERC721Enumerable, Ownable {
             _land.latestPrice = highestBid[_tokenId];
             _land.ownedBy = highestBidder[_tokenId];
             highestBid[_tokenId] = 0;
+            bidderCount[_tokenId] = 0;
             transferFrom(_from, highestBidder[_tokenId], _tokenId);
         }
         
