@@ -15,11 +15,11 @@ function GameLand({ land, landInfo }) {
 		<Link
 			className='game__land'
 			title={`
-TokenId: ${land.id}
-CountryName: ${land.countryName}
-Auction Available: ${land.isAuctionAvailable}
-Latest Price: ${land.latestPrice}
-`}
+                    TokenId: ${land.id}
+                    CountryName: ${land.countryName}
+                    Auction Available: ${land.isAuctionAvailable}
+                    Latest Price: ${land.latestPrice}
+                    `}
 			to={`/land/${land.countryName.replaceAll(' ', '')}`}
 			style={landImageStyle}>
 			{/* Land #{landId + 1} */}
