@@ -9,10 +9,13 @@ function StartAuctionModal({
 	setIsStartAuctionModalOpen,
 	landId,
 	startAuction,
+	sp,
 }) {
 	const account = useStore((state) => state.account);
 
-	const [startPrice, setStartPrice] = useState('');
+	const [startPrice, setStartPrice] = useState(
+		Web3.utils.fromWei(String(sp), 'ether')
+	);
 
 	const changeModalInputHandler = (e) => {
 		setStartPrice(e.target.value);

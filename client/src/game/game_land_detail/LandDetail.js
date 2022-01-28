@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
 
@@ -34,10 +35,7 @@ function LandDetail() {
 		state.setContractOwner,
 	]);
 
-	const [erc721list, setErc721list] = useStore((state) => [
-		state.erc721list,
-		state.setErc721list,
-	]);
+	const setErc721list = useStore((state) => state.setErc721list);
 
 	/// need to relocate
 	async function fetchLandDetail() {
@@ -60,6 +58,8 @@ function LandDetail() {
 			.then((hb) => {
 				if (hb === String(0)) {
 					// === => == op
+					// DO NOT CHANGE == TO ===
+					// eslint-disable-next-line eqeqeq
 					if (land.latestPrice == 0) {
 						setStartPrice(10e13);
 					} else {
@@ -90,7 +90,6 @@ function LandDetail() {
 				for (let i = 0; i < totalSupply; i++) {
 					arr.push(i);
 				}
-				// TODO
 				for (let tokenId of arr) {
 					let tokenOwner = await tokenContract.methods.ownerOf(tokenId).call();
 					if (String(tokenOwner).toLowerCase() === account) {
@@ -135,8 +134,6 @@ function LandDetail() {
 
 	const startAuction = async (account, tokenId, startPrice) => {
 		setIsLoading(true);
-		console.log('startPrice type' + typeof startPrice);
-		console.log('startAuction() ' + startPrice);
 		const web3 = new Web3('HTTP://127.0.0.1:7545');
 		const tokenContract = await new web3.eth.Contract(
 			JSON.parse(abi),
@@ -219,6 +216,7 @@ function LandDetail() {
 							setIsStartAuctionModalOpen={setIsStartAuctionModalOpen}
 							landId={land.id}
 							startAuction={startAuction}
+							sp={startPrice}
 						/>
 					)}
 

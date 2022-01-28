@@ -14,10 +14,7 @@ function Home() {
 		state.transactionCount,
 		state.setTransactionCount,
 	]);
-	const [contractOwner, setContractOwner] = useStore((state) => [
-		state.contractOwner,
-		state.setContractOwner,
-	]);
+	const setContractOwner = useStore((state) => state.setContractOwner);
 
 	useEffect(() => {
 		async function fetchTotalTransactions() {
@@ -32,6 +29,7 @@ function Home() {
 		}
 
 		fetchTotalTransactions();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<div className='home__container'>
@@ -92,6 +90,7 @@ function HomeDescription() {
 				*Working on it (asap): 거래 시 수수료 받기 <br />
 				✨ *Working on it (asap): 컨트랙트 오너 출금 기능 개발 <br />
 				제외한) refund 기능구현 <br />
+				✨ *Working on it: 디자인 개선 <br />
 			</p>
 		</div>
 	);

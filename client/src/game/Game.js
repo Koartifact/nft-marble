@@ -14,11 +14,8 @@ import './Game.css';
 import { useStore } from '../store';
 
 function Game() {
-	const [lands, setLands] = useStore((state) => [state.lands, state.setLands]);
-	const [account, setAccount] = useStore((state) => [
-		state.account,
-		state.setAccount,
-	]);
+	const setLands = useStore((state) => state.setLands);
+	const account = useStore((state) => state.account);
 	const [erc721list, setErc721list] = useStore((state) => [
 		state.erc721list,
 		state.setErc721list,
@@ -38,7 +35,6 @@ function Game() {
 			const cLands = await tokenContract.methods.getAllLands().call();
 			await setLands(cLands);
 		}
-		// TODO
 		async function tokenList() {
 			console.log('addNewErc721 called');
 			setIsLoading(true);
@@ -50,9 +46,7 @@ function Game() {
 						address
 					);
 					const totalSupply = await tokenContract.methods.totalSupply().call();
-					// token id arr
 					let arr = [];
-					// 비교할 token 객체 arr
 					let tokens = [];
 					for (let i = 0; i < totalSupply; i++) {
 						arr.push(i);
@@ -65,7 +59,6 @@ function Game() {
 							tokens.push({ tokenId });
 						}
 					}
-					// tokens + erc721list 후 tokenId로 중복제거
 					let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
 					await setErc721list(uniqArr);
 					setIsLoading(false);
@@ -80,6 +73,7 @@ function Game() {
 		}
 		fetchLands();
 		tokenList();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [account]);
 
 	return (

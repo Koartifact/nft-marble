@@ -9,20 +9,11 @@ function GameUserInfo() {
 		state.setAccount,
 	]);
 
-	const [erc721list, setErc721list] = useStore((state) => [
-		state.erc721list,
-		state.setErc721list,
-	]);
+	const erc721list = useStore((state) => state.erc721list);
 
-	const [isLoading, setIsLoading] = useStore((state) => [
-		state.isLoading,
-		state.setIsLoading,
-	]);
+	const setIsLoading = useStore((state) => state.setIsLoading);
 
-	const [contractOwner, setContractOwner] = useStore((state) => [
-		state.contractOwner,
-		state.setContractOwner,
-	]);
+	const contractOwner = useStore((state) => state.contractOwner);
 
 	// connect metamask wallet
 	const connectWallet = async () => {

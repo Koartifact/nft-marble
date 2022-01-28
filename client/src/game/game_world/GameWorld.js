@@ -8,7 +8,7 @@ import './GameWorld.css';
 import { useStore } from '../../store';
 
 function GameWorld() {
-	const [lands, setLands] = useStore((state) => [state.lands, state.setLands]);
+	const lands = useStore((state) => state.lands);
 
 	return (
 		<div className='game__world__container'>

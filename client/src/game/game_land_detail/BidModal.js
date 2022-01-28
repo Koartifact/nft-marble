@@ -18,7 +18,6 @@ function BidModal({
 	useEffect(() => {}, []);
 
 	const [bid, setBid] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
 
 	const changeModalInputHandler = (e) => {
 		setBid(e.target.value);
@@ -39,12 +38,10 @@ function BidModal({
 			.on('receipt', (receipt) => {
 				fetchLandDetail();
 				tokenList();
-				setIsLoading(false);
 				setIsBidModalOpen(false);
 			})
 			.catch((error) => {
 				alert(error);
-				setIsLoading(false);
 				setIsBidModalOpen(false);
 			});
 	};

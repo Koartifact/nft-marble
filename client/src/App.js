@@ -14,15 +14,9 @@ import abi from './data-stores/tokenAbi.json';
 import address from './data-stores/tokenAddr';
 
 function App() {
-	const [isLoading, setIsLoading] = useStore((state) => [
-		state.isLoading,
-		state.setIsLoading,
-	]);
-	const [web3, setWeb3] = useStore((state) => [state.web3, state.setWeb3]);
-	const [contractOwner, setContractOwner] = useStore((state) => [
-		state.contractOwner,
-		state.setContractOwner,
-	]);
+	const isLoading = useStore((state) => state.isLoading);
+	const setWeb3 = useStore((state) => state.setWeb3);
+	const setContractOwner = useStore((state) => state.setContractOwner);
 
 	useEffect(() => {
 		if (typeof window.ethereum !== 'undefined') {
