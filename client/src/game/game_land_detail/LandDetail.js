@@ -12,12 +12,14 @@ import Loading from '../../loading/Loading';
 import BidModal from './BidModal';
 
 import './LandDetail.css';
+import StartAuctionModal from './StartAuctionModal';
 
 function LandDetail() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [isBidModalOpen, setIsBidModalOpen] = useState(false);
 	const [highestBid, setHighestBid] = useState(0);
 	const [startPrice, setStartPrice] = useState(0);
+	const [isStartAuctionModalOpen, setIsStartAuctionModalOpen] = useState(false);
 
 	// cn = countryName
 	const { cn } = useParams();
@@ -57,7 +59,8 @@ function LandDetail() {
 			.call()
 			.then((hb) => {
 				if (hb === String(0)) {
-					if (land.latestPrice === 0) {
+					// === => == op
+					if (land.latestPrice == 0) {
 						setStartPrice(10e13);
 					} else {
 						setStartPrice(Number(land.latestPrice));
@@ -82,9 +85,7 @@ function LandDetail() {
 					}
 				);
 				const totalSupply = await tokenContract.methods.totalSupply().call();
-				// token id arr
 				let arr = [];
-				// 비교할 token 객체 arr
 				let tokens = [];
 				for (let i = 0; i < totalSupply; i++) {
 					arr.push(i);
@@ -96,8 +97,6 @@ function LandDetail() {
 						tokens.push({ tokenId });
 					}
 				}
-				// tokens + erc721list 후 tokenId로 중복제거
-				// let uniqArr = _.uniqBy([...erc721list, ...tokens], 'tokenId');
 				await setErc721list(tokens);
 			} catch (error) {
 				alert(error);
@@ -112,9 +111,8 @@ function LandDetail() {
 		const tokenContract = await new web3.eth.Contract(JSON.parse(abi), address);
 		const contractOwner = await tokenContract.methods.owner().call();
 		await setContractOwner(contractOwner);
-		// await console.log(contractOwner);
 	};
-	/// need to relocate
+
 	useEffect(() => {
 		setIsLoading(true);
 		fetchLandDetail();
@@ -123,7 +121,7 @@ function LandDetail() {
 		setIsLoading(false);
 	}, [account, cn]);
 
-	// getting flag imageUrl
+	// get flag imageUrl
 	useEffect(() => {
 		const nation = nationInfos.find(
 			(nation) => nation.cn.replaceAll(' ', '') === cn
@@ -137,7 +135,8 @@ function LandDetail() {
 
 	const startAuction = async (account, tokenId, startPrice) => {
 		setIsLoading(true);
-		console.log(startPrice);
+		console.log('startPrice type' + typeof startPrice);
+		console.log('startAuction() ' + startPrice);
 		const web3 = new Web3('HTTP://127.0.0.1:7545');
 		const tokenContract = await new web3.eth.Contract(
 			JSON.parse(abi),
@@ -145,7 +144,6 @@ function LandDetail() {
 			{ from: account, gas: 10000000 }
 		);
 		await tokenContract.methods
-			// somehow evm convert string to uint type
 			.startAuction(account, tokenId, String(startPrice))
 			.send()
 			.on('receipt', (receipt) => {
@@ -215,6 +213,15 @@ function LandDetail() {
 							highestBid={highestBid}
 						/>
 					)}
+
+					{isStartAuctionModalOpen && (
+						<StartAuctionModal
+							setIsStartAuctionModalOpen={setIsStartAuctionModalOpen}
+							landId={land.id}
+							startAuction={startAuction}
+						/>
+					)}
+
 					<div className='land_details__left_side'>
 						<GameUserInfo />
 					</div>
@@ -275,7 +282,9 @@ function LandDetail() {
 											<button
 												className='land_details__button'
 												onClick={() => {
-													startAuction(account, land.id, startPrice);
+													// TODO
+													// startAuction(account, land.id, startPrice);
+													setIsStartAuctionModalOpen(true);
 												}}>
 												Start Auction
 											</button>

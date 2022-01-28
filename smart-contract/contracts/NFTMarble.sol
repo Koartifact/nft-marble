@@ -3,8 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-// TODO
-// Auction
+
 
 contract NFTMarble is ERC721Enumerable, Ownable {
     // nft 발행 갯수 제한
@@ -76,9 +75,7 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         _totalTransactions++;
     }
 
-    /*
-        Buy land 
-     */
+    // Buy land 
     function buyLand(address _from, uint _tokenId) public {
         require(owner() != _from, "Error - contract owner can't trigger buyLand func");
         Land memory _land = getTokenDetailById(_tokenId);
@@ -103,8 +100,8 @@ contract NFTMarble is ERC721Enumerable, Ownable {
     function getAllLands() public view returns(Land[] memory) {
         return _lands;
     }
-    // Auction Feature
 
+    // Auction Features
     function startAuction(address _from,uint _tokenId, uint _startPrice) public {
         require(_from != address(0), "Error - invalid address");
         require(address(getTokenDetailById(_tokenId).ownedBy) == _from, "Error - need to owner of this token");
@@ -116,13 +113,14 @@ contract NFTMarble is ERC721Enumerable, Ownable {
         highestBid[_tokenId] = _startPrice;
         highestBidder[_tokenId] = _from;
     }
-    // TODO
-    // function bid(uint _tokenId) public payable notOwner {
+
     function bid(address _from, uint _tokenId) public payable {
         require(_from != address(0), "Error - invalid address");
+
         // require(getTokenDetailById(_tokenId).ownedBy == _from, "Error - token owner can't bid");
         require(getTokenDetailById(_tokenId).isAuctionAvailable, "Error - Auction is not available for this token");
         require(msg.value >= 100, "Error - bid price need to bigger than 100 wei");
+
         // incoming bid need to be bigger than current bid
         if (bidderBalance[_tokenId][_from] == 0) {
             require(msg.value > highestBid[_tokenId], "Error - bid need to be bigger than previous highest bid");
@@ -161,15 +159,10 @@ contract NFTMarble is ERC721Enumerable, Ownable {
             bidderCount[_tokenId] = 0;
             transferFrom(_from, highestBidder[_tokenId], _tokenId);
         }
-        
         _changeLandState(_tokenId, _land);
-        
-        
     }
 
-    function sendEth(address payable _to, uint amount) private {
-        _to.transfer(amount);
-    }
+
 
     function getTokenBidderCount(uint _tokenId) public view returns(uint) {
         return bidderCount[_tokenId];
@@ -190,6 +183,9 @@ contract NFTMarble is ERC721Enumerable, Ownable {
     // Auction Feature End
 
     // private helper functions
+    function sendEth(address payable _to, uint amount) private {
+        _to.transfer(amount);
+    }
     function _changeLandState(uint _tokenId, Land memory _land) private {
         _tokenDetailsById[_tokenId] = _land;
         _tokenDetails[getTokenDetailById(_tokenId).countryName] = _land;
@@ -197,8 +193,7 @@ contract NFTMarble is ERC721Enumerable, Ownable {
     }
     // private helper functions end
 
-    // TODO inherit
-    // need to fix
+    // inherited from ERC721 
     function transferFrom(
         address from,
         address to,
